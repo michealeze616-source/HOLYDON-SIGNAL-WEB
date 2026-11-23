@@ -21,7 +21,7 @@ async function callGemini(instruction:string,existing?:string){
  setAiBusy(true);try{
  const modelsResponse=await fetch("https://generativelanguage.googleapis.com/v1beta/models",{headers:{"x-goog-api-key":aiKey}});
  const modelsData=await modelsResponse.json();if(!modelsResponse.ok)throw new Error(modelsData.error?.message||"Could not list Gemini models");
- const available=(modelsData.models||[]).filter((m:any)=>(m.supportedGenerationMethods||[]).includes("generateContent")&&/gemini/i.test(m.name||"")).map((m:any)=>m.name.replace(/^models\\//,""));
+ const available=(modelsData.models||[]).filter((m:any)=>(m.supportedGenerationMethods||[]).includes("generateContent")&&/gemini/i.test(m.name||"")).map((m:any)=>m.name.startsWith("models/")?m.name.slice(7):m.name);
  const preferred=["gemini-2.5-flash-lite","gemini-2.5-flash","gemini-2.0-flash-lite","gemini-2.0-flash"];
  const model=preferred.find((n:string)=>available.includes(n))||available.find((n:string)=>/flash/i.test(n));
  if(!model)throw new Error("No supported Gemini Flash model found for this API key");
